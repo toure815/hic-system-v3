@@ -1,20 +1,56 @@
- services:
+services:
+  # -------------------------------------------------------
+  # 🚀 Backend — Encore API
+  # -------------------------------------------------------
+  - type: web
+    name: hic-backend
+    rootDir: backend
+
+    buildCommand: |
+      curl -fsSL https://get.encl.dev | bash
+      encore version
+      encore build
+
+    startCommand: encore run --port 4000
+
+    envVars:
+      - key: ENCORE_APP_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: true
+      - key: SUPABASE_ANON_KEY
+        sync: true
+services:
+  - type: web
+    name: hic-backend
+    rootDir: backend
+    buildCommand: |
+      npm install -g encore.dev
+      npm install
+      encore build
+    startCommand: encore run --port 4000
+    envVars:
+      - key: ENCORE_APP_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: true
+      - key: SUPABASE_ANON_KEY
+        sync: true
+
   - type: static
     name: hic-system
     rootDir: frontend
     buildCommand: npm install && npm run build
     publishPath: dist
-
     routes:
       - type: rewrite
         source: /*
         destination: /index.html
-
     envVars:
       - key: VITE_API_BASE_URL
-        sync: false
+        value: https://hic-backend.onrender.com
       - key: VITE_SUPABASE_URL
-        sync: false
+        sync: true
       - key: VITE_SUPABASE_ANON_KEY
-        sync: false
+        sync: true
 
